@@ -20,8 +20,8 @@ namespace SocobanGame
 
 		protected override void Initialize()
 		{
-			_graphics.PreferredBackBufferWidth = 256 * 2;
-			_graphics.PreferredBackBufferHeight = 240 * 2;
+			_graphics.PreferredBackBufferWidth = 400 * 2;
+			_graphics.PreferredBackBufferHeight = 400 * 2;
 			_graphics.ApplyChanges();
 
 			var stateComponent = new StateComponent(this);

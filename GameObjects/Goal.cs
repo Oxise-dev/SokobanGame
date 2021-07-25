@@ -2,25 +2,27 @@
 using Microsoft.Xna.Framework.Graphics;
 using SocobanGame.Colision;
 using SocobanGame.General;
+using System;
 using System.Collections.Generic;
 
 namespace SocobanGame.GameObjects
 {
-	public class Box : GameObject
+	public class Goal : GameObject
 	{
-		private Vector2 _velocity;
-		public Box(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
+		public bool IsOccupied = false;
+		public Goal(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
 		{
-			ID = GameObjectID.Box;
+			ID = GameObjectID.Goal;
 		}
+
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			_spriteSheet.Draw(spriteBatch, Position, 0.4f, 5, Color.White);
+			_spriteSheet.Draw(spriteBatch, Position, 0.5f, 4, Color.White);
 		}
 
 		public override void Update(float deltaTime)
 		{
 
-		}	
+		}
 	}
 }

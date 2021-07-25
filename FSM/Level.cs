@@ -15,15 +15,12 @@ namespace SocobanGame.FSM
 	class Level
 	{
 		private readonly Game _game;
-		private readonly SpriteBatch _spriteBatch;
-
 		public List<GameObject> GameObjects = new List<GameObject>();
 		public ColisionManager ColisionManager = new ColisionManager();
 
 		public Level(Game game)
 		{
 			_game = game;
-			_spriteBatch = new SpriteBatch(game.GraphicsDevice);
 		}
 		public void LoadContent(string path)
 		{
@@ -31,6 +28,9 @@ namespace SocobanGame.FSM
 
 			GameObjects.Clear();
 			ColisionManager.Clear();
+
+			var textures = _game.Content.Load<Texture2D>("SocobanGraphics");
+			var spriteSheet = new SpriteSheet(textures, 16, 16);
 
 			var document = XDocument.Load(path);
 			int levelWidth = document.Elements()
@@ -48,47 +48,17 @@ namespace SocobanGame.FSM
 					tiles2D[x, y] = tiles1D[y * levelWidth + x];
 				}
 			}
-			// Adding objects according to the integers in the array
+			// Adding objects according to their position in the array
 			for (int y = 0; y < levelHeight; y++)
 			{
 				for (int x = 0; x < levelWidth; x++)
 				{
-					if(tiles2D[x, y] == 3)
-					{
-						var floor = new Floor(new Vector2(x * 16, y * 16), _game);
-						GameObjects.Add(floor);
+					Vector2 position = new Vector2(x * 16, y * 16);
+					var id = tiles2D[x, y];
+					var gameObject = GameObjectFactory.CreateGameObject(id, position, _game, spriteSheet);
 
-					}
-					else if(tiles2D[x, y] == 2)
-					{
-						var wall = new Wall(new Vector2(x * 16, y * 16), _game);
-						GameObjects.Add(wall);
-						ColisionManager.Add(wall);
-					}
-					else if (tiles2D[x, y] == 5)
-					{
-						var floor = new Floor(new Vector2(x * 16, y * 16), _game);
-						var goalMark = new GoalMark(new Vector2(x * 16, y * 16), _game);
-						GameObjects.Add(floor);
-						GameObjects.Add(goalMark);
-						ColisionManager.Add(goalMark);
-					}
-					else if (tiles2D[x, y] == 4)
-					{
-						var floor = new Floor(new Vector2(x * 16, y * 16), _game);
-						var player = new Player(new Vector2(x * 16, y * 16), _game);
-						GameObjects.Add(floor);
-						GameObjects.Add(player);
-						ColisionManager.Add(player);
-					}
-					else if (tiles2D[x, y] == 6)
-					{
-						var floor = new Floor(new Vector2(x * 16, y * 16), _game);
-						var box = new Box(new Vector2(x * 16, y * 16), _game);
-						GameObjects.Add(floor);
-						GameObjects.Add(box);
-						ColisionManager.Add(box);
-					}
+					if (gameObject != null)
+						GameObjects.Add(gameObject);
 				}
 			}
 		}

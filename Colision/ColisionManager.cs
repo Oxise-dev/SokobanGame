@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SocobanGame.Colision
 {
-	class ColisionManager
+	public class ColisionManager
 	{
 		public List<IColideable> Colideables = new List<IColideable>();
 		public ColisionManager()

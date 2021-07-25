@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SocobanGame.General
 {
-	class SpriteSheet
+	public class SpriteSheet
 	{
 		private readonly Texture2D _texture;
 

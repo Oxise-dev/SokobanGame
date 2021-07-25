@@ -8,15 +8,11 @@ using System.Text;
 
 namespace SocobanGame.GameObjects
 {
-	class Floor : GameObject
+	public class Floor : GameObject
 	{
-		private readonly SpriteSheet _spriteSheet;
-		public Floor(Vector2 position, Game game) : base(position, game)
+		public Floor(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
 		{
-			Tag = "floor";
-
-			var playerTexture = game.Content.Load<Texture2D>("SocobanGraphics");
-			_spriteSheet = new SpriteSheet( playerTexture, 16, 16);
+			ID = GameObjectID.Floor;
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)

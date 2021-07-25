@@ -9,10 +9,8 @@ using System.Collections.Generic;
 
 namespace SocobanGame.GameObjects
 {
-	class Player : GameObject
+	public class Player : GameObject
 	{
-		private readonly SpriteSheet _spriteSheet;
-
 		private Input _input;
 		private KeyboardState _keyboardState, _lastKeyboardState;
 
@@ -21,14 +19,10 @@ namespace SocobanGame.GameObjects
 		//private float _timerSpeed = 10f;
 
 		//private Vector2 _startPosition;
-		public Player(Vector2 position, Game game) : base(position, game)
+		public Player(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
 		{
-			Tag = "player";
-
+			ID = GameObjectID.Player;
 			_input = new Input();
-
-			var playerTexture = game.Content.Load<Texture2D>("SocobanGraphics");
-			_spriteSheet = new SpriteSheet(playerTexture, 16, 16);
 		}
 		public float Speed { get; set; } = 16f;
 		private Vector2 _velocity { get; set; }
@@ -44,50 +38,6 @@ namespace SocobanGame.GameObjects
 			_keyboardState = Keyboard.GetState();
 
 			_velocity = GetDirection();
-
-			if (_velocity != Vector2.Zero && ColisionManager != null)
-			{
-				List<IColideable> colisions = new List<IColideable>();
-
-				foreach (var colideable in ColisionManager.Colideables)
-				{
-					Rectangle boxRay = new Rectangle(Rectangle.X + (int)_velocity.X * 16, Rectangle.Y + (int)_velocity.Y * 16, 16, 16);
-					if (boxRay.Intersects(colideable.Rectangle) && colideable != this)
-						colisions.Add(colideable);
-
-				}
-				if (colisions.Count > 0)
-				{
-					foreach (var colideable in colisions)
-					{
-						if (colideable.Tag == "wall")
-						{
-							_velocity = Vector2.Zero;
-						}
-						else if (colideable.Tag == "goalMark")
-						{
-							var goalMark = colideable as GoalMark;
-							if (!goalMark.IsOccupied)
-							{
-								Position += _velocity * 16;
-								_velocity = Vector2.Zero;
-							}
-						}
-						else if (colideable.Tag == "box")
-						{
-							var box = colideable as Box;
-							box.ApplyVelocity(_velocity * 16);
-							if (!box.ColidedWithAnother)
-								Position += _velocity * 16;
-						}
-
-					}
-				}
-				else
-				{
-					Position += _velocity * 16;
-				}
-			}
 		}
 
 		private Vector2 GetDirection()

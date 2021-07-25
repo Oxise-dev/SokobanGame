@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SocobanGame.General
 {
-	class Input
+	public class Input
 	{
 		public Keys Left { get; set; } = Keys.Left;
 		public Keys Right { get; set; } = Keys.Right;

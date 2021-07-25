@@ -28,7 +28,7 @@ namespace SocobanGame.FSM
 		}
 		public override void Enter()
 		{
-			_screen = new RenderTarget2D(StateMachine.Game.GraphicsDevice, 224, 256);
+			_screen = new RenderTarget2D(StateMachine.Game.GraphicsDevice, 400, 400);
 			_spriteBatch = new SpriteBatch(StateMachine.Game.GraphicsDevice);
 		}
 		public override void Exit()
@@ -56,7 +56,7 @@ namespace SocobanGame.FSM
 			StateMachine.Game.GraphicsDevice.SetRenderTarget(null);
 
 			_spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-			_spriteBatch.Draw(_screen, new Rectangle(0, 0, 240 * ScreenSizeMultiplier, 256 * ScreenSizeMultiplier), Color.White);
+			_spriteBatch.Draw(_screen, new Rectangle(0, 0, 400 * ScreenSizeMultiplier, 400 * ScreenSizeMultiplier), Color.White);
 			_spriteBatch.End();		
 		}
 	}

@@ -5,15 +5,11 @@ using SocobanGame.General;
 
 namespace SocobanGame.GameObjects
 {
-	class Wall : GameObject
+	public class Wall : GameObject
 	{
-		private readonly SpriteSheet _spriteSheet;
-		public Wall(Vector2 position, Game game) : base(position, game)
+		public Wall(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
 		{
-			Tag = "wall";
-
-			var playerTexture = game.Content.Load<Texture2D>("SocobanGraphics");
-			_spriteSheet = new SpriteSheet(playerTexture, 16, 16);
+			ID = GameObjectID.Wall;
 		}
 		public override void Draw(SpriteBatch spriteBatch)
 		{
@@ -22,7 +18,7 @@ namespace SocobanGame.GameObjects
 
 		public override void Update(float deltaTime)
 		{
-
+			
 		}
 	}
 }
