@@ -1,10 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SocobanGame.Colision;
 using SocobanGame.General;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SocobanGame.GameObjects
 {
@@ -14,7 +10,6 @@ namespace SocobanGame.GameObjects
 		{
 			ID = GameObjectID.Floor;
 		}
-
 		public override void Draw(SpriteBatch spriteBatch)
 		{
 			_spriteSheet.Draw(spriteBatch, Position, 1f, 2, Color.White);

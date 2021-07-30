@@ -8,7 +8,6 @@ using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
 using SocobanGame.General;
 using System.Xml.Linq;
-using SocobanGame.Colision;
 
 namespace SocobanGame.FSM
 {
@@ -16,7 +15,6 @@ namespace SocobanGame.FSM
 	{
 		private readonly Game _game;
 		public List<GameObject> GameObjects = new List<GameObject>();
-		public ColisionManager ColisionManager = new ColisionManager();
 
 		public Level(Game game)
 		{
@@ -27,7 +25,6 @@ namespace SocobanGame.FSM
 			// There will be shitcode untill i realize how to make it better
 
 			GameObjects.Clear();
-			ColisionManager.Clear();
 
 			var textures = _game.Content.Load<Texture2D>("SocobanGraphics");
 			var spriteSheet = new SpriteSheet(textures, 16, 16);

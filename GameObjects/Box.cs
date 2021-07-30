@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SocobanGame.Colision;
 using SocobanGame.General;
 using System.Collections.Generic;
 
