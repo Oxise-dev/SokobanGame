@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SocobanGame.Colision;
 using SocobanGame.FSM;
 using SocobanGame.General;
 using System;
@@ -13,18 +14,20 @@ namespace SocobanGame.GameObjects
 		private Input _input;
 		private KeyboardState _keyboardState, _lastKeyboardState;
 
+		private List<GameObject> _colidedObjects = new List<GameObject>();
 		//private bool _anyKeyPressed;
 		//private float _timer = 0f;
 		//private float _timerSpeed = 10f;
 
 		//private Vector2 _startPosition;
-		public Player(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
+		public Player(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager) 
+						: base(position, game, spriteSheet, colisionManager)
 		{
 			ID = GameObjectID.Player;
 			_input = new Input();
 		}
 		public float Speed { get; set; } = 16f;
-		private Vector2 _velocity { get; set; }
+		private Vector2 _velocity;
  
 		public override void Draw(SpriteBatch spriteBatch)
 		{
@@ -37,8 +40,48 @@ namespace SocobanGame.GameObjects
 			_keyboardState = Keyboard.GetState();
 
 			_velocity = GetDirection();
-		}
+			_colidedObjects = ColisionManager.GetMoveIntersections(this, _velocity * 16);
 
+			if (_colidedObjects.Count == 0)
+			{
+				Position += _velocity * 16;
+			}
+			else if (_colidedObjects.Count == 1)
+			{
+				foreach (var colidedObject in _colidedObjects)
+				{
+					if (colidedObject.ID == GameObjectID.Goal)
+					{
+						Position += _velocity * 16;
+					}
+					else if (colidedObject.ID == GameObjectID.Box)
+					{
+						var box = colidedObject as Box;
+						if (box.ApplyVelocity(_velocity))
+							Position += _velocity * 16;
+					}
+				}
+			}
+			else
+			{
+				foreach (var colidedObject in _colidedObjects)
+				{
+					if (colidedObject.ID == GameObjectID.Goal)
+					{
+						var goal = colidedObject as Goal;
+						if (goal.IsOccupied == false)
+							Position += _velocity * 16;
+					}
+					else if (colidedObject.ID == GameObjectID.Box)
+					{
+						var box = colidedObject as Box;
+						if (box.ApplyVelocity(_velocity))
+							Position += _velocity * 16;
+					}
+				}
+			}
+
+		}
 		private Vector2 GetDirection()
 		{
 			if (KeyPressed(_input.Left))

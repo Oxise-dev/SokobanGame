@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SocobanGame.Colision;
 using SocobanGame.General;
 
 namespace SocobanGame.GameObjects
 {
 	public class Floor : GameObject
 	{
-		public Floor(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
+		public Floor(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager) 
+						: base(position, game, spriteSheet, colisionManager)
 		{
 			ID = GameObjectID.Floor;
 		}

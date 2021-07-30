@@ -45,7 +45,7 @@ namespace SocobanGame.FSM
 		public override void Draw()
 		{
 			StateMachine.Game.GraphicsDevice.SetRenderTarget(_screen);
-			StateMachine.Game.GraphicsDevice.Clear(Color.Black);
+			StateMachine.Game.GraphicsDevice.Clear(Color.MediumPurple);
 
 			_spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.BackToFront);
 			foreach (var gameObject in _currentLevel.GameObjects)

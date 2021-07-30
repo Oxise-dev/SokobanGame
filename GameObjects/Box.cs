@@ -1,14 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SocobanGame.General;
+using SocobanGame.Colision;
 using System.Collections.Generic;
+using System;
 
 namespace SocobanGame.GameObjects
 {
 	public class Box : GameObject
 	{
 		private Vector2 _velocity;
-		public Box(Vector2 position, Game game, SpriteSheet spriteSheet) : base(position, game, spriteSheet)
+		private List<GameObject> _colidedObjects = new List<GameObject>();
+		public Box(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager movementController) 
+					: base(position, game, spriteSheet, movementController)
 		{
 			ID = GameObjectID.Box;
 		}
@@ -20,6 +24,23 @@ namespace SocobanGame.GameObjects
 		public override void Update(float deltaTime)
 		{
 
-		}	
+		}
+		public bool ApplyVelocity(Vector2 velocity)
+		{	
+			_velocity = velocity;
+
+			_colidedObjects = ColisionManager.GetMoveIntersections(this, _velocity * 16);
+			if (_colidedObjects.Count < 2)
+			{
+				foreach (var colidedObject in _colidedObjects)
+					if (colidedObject.ID != GameObjectID.Goal)
+						return false;
+
+				Position += _velocity * 16;
+				return true;
+			}
+
+			return false;
+		}
 	}
 }

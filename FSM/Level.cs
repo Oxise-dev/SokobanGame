@@ -8,12 +8,14 @@ using System.Xml;
 using Microsoft.Xna.Framework.Graphics;
 using SocobanGame.General;
 using System.Xml.Linq;
+using SocobanGame.Colision;
 
 namespace SocobanGame.FSM
 {
 	class Level
 	{
 		private readonly Game _game;
+		private ColisionManager _colisionManager = new ColisionManager();
 		public List<GameObject> GameObjects = new List<GameObject>();
 
 		public Level(Game game)
@@ -52,10 +54,14 @@ namespace SocobanGame.FSM
 				{
 					Vector2 position = new Vector2(x * 16, y * 16);
 					var id = tiles2D[x, y];
-					var gameObject = GameObjectFactory.CreateGameObject(id, position, _game, spriteSheet);
+					var gameObject = GameObjectFactory.CreateGameObject(id, position, _game, spriteSheet, _colisionManager);
 
 					if (gameObject != null)
 						GameObjects.Add(gameObject);
+
+					// avoiding adding floor objects
+					if (gameObject != null && id > 1)
+						_colisionManager.Add(gameObject);
 				}
 			}
 		}
