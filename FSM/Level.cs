@@ -15,18 +15,22 @@ namespace SocobanGame.FSM
 	class Level
 	{
 		private readonly Game _game;
+
+		private GameObjectFactory _gameObjectFactory;
 		private ColisionManager _colisionManager = new ColisionManager();
 		public List<GameObject> GameObjects = new List<GameObject>();
 
-		public Level(Game game)
+		public Level(Game game, GameObjectFactory gameObjectFactory)
 		{
 			_game = game;
+			_gameObjectFactory = gameObjectFactory;
 		}
 		public void LoadContent(string path)
 		{
 			// There will be shitcode untill i realize how to make it better
 
 			GameObjects.Clear();
+			_colisionManager.Clear();
 
 			var textures = _game.Content.Load<Texture2D>("SocobanGraphics");
 			var spriteSheet = new SpriteSheet(textures, 16, 16);
@@ -54,16 +58,20 @@ namespace SocobanGame.FSM
 				{
 					Vector2 position = new Vector2(x * 16, y * 16);
 					var id = tiles2D[x, y];
-					var gameObject = GameObjectFactory.CreateGameObject(id, position, _game, spriteSheet, _colisionManager);
-
-					if (gameObject != null)
-						GameObjects.Add(gameObject);
-
-					// avoiding adding floor objects
-					if (gameObject != null && id > 1)
-						_colisionManager.Add(gameObject);
+					SpawnObject(id, position, spriteSheet);
 				}
 			}
+		}
+
+		private void SpawnObject(int id, Vector2 position, SpriteSheet spriteSheet)
+		{
+			var gameObject = _gameObjectFactory.CreateGameObject(id, position, _game, spriteSheet, _colisionManager);
+
+			if (gameObject != null)
+				GameObjects.Add(gameObject);
+
+			if (gameObject != null && id > 1)
+				_colisionManager.Add(gameObject);
 		}
 	}
 }

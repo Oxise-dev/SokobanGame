@@ -7,9 +7,9 @@ using System.Text;
 
 namespace SocobanGame.GameObjects
 {
-	public static class GameObjectFactory
+	public class GameObjectFactory
 	{
-		public static GameObject CreateGameObject(int id, Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager)
+		public GameObject CreateGameObject(int id, Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager)
 		{
 			if (id == GameObjectID.Floor)
 			{
