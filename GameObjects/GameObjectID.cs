@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace SocobanGame.GameObjects
 {
 	public static class GameObjectID

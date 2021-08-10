@@ -1,15 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using SocobanGame.Colision;
+using SocobanGame.FSM;
 using SocobanGame.General;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using SocobanGame.Sound;
 
 namespace SocobanGame.GameObjects
 {
 	public class GameObjectFactory
 	{
-		public GameObject CreateGameObject(int id, Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager)
+		public GameObject CreateGameObject(int id, Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager, Level level, SoundManager soundManager)
 		{
 			if (id == GameObjectID.Floor)
 			{
@@ -21,11 +20,11 @@ namespace SocobanGame.GameObjects
 			}
 			else if (id == GameObjectID.Player)
 			{
-				return new Player(position, game, spriteSheet, colisionManager);
+				return new Player(position, game, spriteSheet, colisionManager, soundManager);
 			}
 			else if (id == GameObjectID.Goal)
 			{
-				return new Goal(position, game, spriteSheet, colisionManager);
+				return new Goal(position, game, spriteSheet, colisionManager, level);
 			}
 			else if (id == GameObjectID.Box)
 			{

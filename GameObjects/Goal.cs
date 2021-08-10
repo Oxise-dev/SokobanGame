@@ -2,19 +2,23 @@
 using Microsoft.Xna.Framework.Graphics;
 using SocobanGame.General;
 using SocobanGame.Colision;
-using System;
 using System.Collections.Generic;
+using SocobanGame.FSM;
 
 namespace SocobanGame.GameObjects
 {
 	public class Goal : GameObject
 	{
-		public bool IsOccupied = false;
+		private Level _level;
 		private List<GameObject> _gameObjects = new List<GameObject>();
-		public Goal(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager) 
+
+		public bool IsOccupied = false;
+		public Goal(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager, Level level) 
 						: base(position, game, spriteSheet, colisionManager)
 		{
 			ID = GameObjectID.Goal;
+			_level = level;
+			level.Goals.Add(this);
 		}
 
 		public override void Draw(SpriteBatch spriteBatch)
@@ -24,19 +28,7 @@ namespace SocobanGame.GameObjects
 
 		public override void Update(float deltaTime)
 		{
-			_gameObjects = ColisionManager.GetMoveIntersections(this, Vector2.Zero);
-			if (_gameObjects.Count > 0)
-			{
-				foreach (var gameObject in _gameObjects)
-				{
-					if (gameObject.ID == GameObjectID.Box)
-						IsOccupied = true;
-				}
-			}
-			else
-			{
-				IsOccupied = false;
-			}
+			
 		}
 	}
 }

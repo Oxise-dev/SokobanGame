@@ -43,7 +43,6 @@ namespace SocobanGame.FSM
 			if (_currentState != null)
 				_currentState.Draw();
 		}
-
 		public void Update(float deltaTime)
 		{
 			if (_currentState != null)

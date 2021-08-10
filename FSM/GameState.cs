@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SocobanGame.Data;
 using SocobanGame.GameObjects;
-using SocobanGame.General;
-using System;
+using SocobanGame.Sound;
 using System.Collections.Generic;
-using System.Xml;
 
 namespace SocobanGame.FSM
 {
@@ -14,13 +14,25 @@ namespace SocobanGame.FSM
 	{
 		private static int ScreenSizeMultiplier = 2;
 
-		private string filePath = "D:\\Monogame Learning\\SocobanGame\\LevelData\\level_0.xml";
+		private LevelController _levelController;
+
+		private int levelNumber = 0;
+
+		private Texture2D _blackLine;
+		private Color _backgroundColor = new Color(10, 3, 32);
+		private Effect _shader;
+
 		private SpriteBatch _spriteBatch;
 		private ContentManager _content;
 		private RenderTarget2D _screen;
 
+
+		private SoundManager _soundManager;
+		private SoundManager _musicManager;
+
+		private SoundEffect _gameSoundtrack;
+
 		private GameObjectFactory _gameObjectFactory;
-		private Level _currentLevel;
 
 		public GameState(StateMachine stateMachine) : base(stateMachine)
 		{
@@ -30,11 +42,21 @@ namespace SocobanGame.FSM
 		}
 		public override void Enter()
 		{
-			_screen = new RenderTarget2D(StateMachine.Game.GraphicsDevice, 400, 400);
+			_screen = new RenderTarget2D(StateMachine.Game.GraphicsDevice, 15 * 16, 15 * 16);
 			_spriteBatch = new SpriteBatch(StateMachine.Game.GraphicsDevice);
 
-			_currentLevel = new Level(StateMachine.Game, _gameObjectFactory);
-			_currentLevel.LoadContent(filePath);
+			_blackLine = StateMachine.Game.Content.Load<Texture2D>("BlackLine");
+
+			_soundManager = new SoundManager();
+			_musicManager = new SoundManager(looping: true);
+
+			_gameSoundtrack = StateMachine.Game.Content.Load<SoundEffect>("Sounds\\SocobanMusic");
+
+			_musicManager.PlaySound(_gameSoundtrack, 0.1f);
+
+			_levelController = new LevelController(StateMachine.Game, _gameObjectFactory, _soundManager);
+			_levelController.LoadLevel(levelNumber);
+
 		}
 		public override void Exit()
 		{
@@ -42,31 +64,24 @@ namespace SocobanGame.FSM
 		}
 		public override void Update(float deltaTime)
 		{
-			var keyboardState = Keyboard.GetState();
-			if (keyboardState.IsKeyDown(Keys.R))
-			{
-				_currentLevel.LoadContent(filePath);
-			}
-			foreach (var gameObject in _currentLevel.GameObjects)
-			{
-				gameObject.Update(deltaTime);
-			}
+			_musicManager.Update(deltaTime);
+			_levelController.Update(deltaTime);
 		}
 		public override void Draw()
 		{
 			StateMachine.Game.GraphicsDevice.SetRenderTarget(_screen);
-			StateMachine.Game.GraphicsDevice.Clear(Color.MediumPurple);
+			StateMachine.Game.GraphicsDevice.Clear(_backgroundColor);
 
-			_spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.BackToFront);
-			foreach (var gameObject in _currentLevel.GameObjects)
-			{
-				gameObject.Draw(_spriteBatch);
-			}
+			_spriteBatch.Begin(sortMode: SpriteSortMode.BackToFront);
+			_levelController.Draw(_spriteBatch);
+			_spriteBatch.Draw(_blackLine, new Vector2(0, 13 * 16), Color.Black);
 			_spriteBatch.End();
+
 			StateMachine.Game.GraphicsDevice.SetRenderTarget(null);
 
 			_spriteBatch.Begin(samplerState: SamplerState.PointClamp);
-			_spriteBatch.Draw(_screen, new Rectangle(0, 0, 400 * ScreenSizeMultiplier, 400 * ScreenSizeMultiplier), Color.White);
+			//_spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.Deferred, effect: _shader);
+			_spriteBatch.Draw(_screen, new Rectangle(0, 0, (15 * 16) * ScreenSizeMultiplier, (15 * 16) * ScreenSizeMultiplier), Color.White);
 			_spriteBatch.End();		
 		}
 	}

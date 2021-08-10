@@ -10,7 +10,12 @@ namespace SocobanGame.GameObjects
 	public class Box : GameObject
 	{
 		private Vector2 _velocity;
+		private Vector2 _scale = Vector2.One;
+
 		private List<GameObject> _colidedObjects = new List<GameObject>();
+
+		public event Action<Vector2> OnBoxMoved;
+
 		public Box(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager movementController) 
 					: base(position, game, spriteSheet, movementController)
 		{
@@ -18,7 +23,8 @@ namespace SocobanGame.GameObjects
 		}
 		public override void Draw(SpriteBatch spriteBatch)
 		{
-			_spriteSheet.Draw(spriteBatch, Position, 0.4f, 5, Color.White);
+			_spriteSheet.Draw(spriteBatch, Position, 0.4f, 5, Color.White, _scale, Vector2.Zero);
+			_scale = Vector2.One;
 		}
 
 		public override void Update(float deltaTime)
@@ -28,7 +34,6 @@ namespace SocobanGame.GameObjects
 		public bool ApplyVelocity(Vector2 velocity)
 		{	
 			_velocity = velocity;
-
 			_colidedObjects = ColisionManager.GetMoveIntersections(this, _velocity * 16);
 			if (_colidedObjects.Count < 2)
 			{
@@ -37,6 +42,8 @@ namespace SocobanGame.GameObjects
 						return false;
 
 				Position += _velocity * 16;
+				_scale.Y *= 1.1f;
+				OnBoxMoved?.Invoke(Position);
 				return true;
 			}
 
