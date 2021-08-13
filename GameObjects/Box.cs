@@ -4,6 +4,8 @@ using SocobanGame.General;
 using SocobanGame.Colision;
 using System.Collections.Generic;
 using System;
+using SocobanGame.FSM;
+using SocobanGame.Turns;
 
 namespace SocobanGame.GameObjects
 {
@@ -12,14 +14,25 @@ namespace SocobanGame.GameObjects
 		private Vector2 _velocity;
 		private Vector2 _scale = Vector2.One;
 
+		private TurnsManager _turn;
+
+		private Level _level;
+
 		private List<GameObject> _colidedObjects = new List<GameObject>();
 
 		public event Action<Vector2> OnBoxMoved;
 
-		public Box(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager movementController) 
+		public Box(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager movementController, Level level) 
 					: base(position, game, spriteSheet, movementController)
 		{
 			ID = GameObjectID.Box;
+
+			_turn = new TurnsManager(this);
+			OnBoxMoved += _turn.Add;
+
+			_level = level;
+			_level.OnNewTurnAdded += AddTurn;
+			_level.OnRevert += Revert;
 		}
 		public override void Draw(SpriteBatch spriteBatch)
 		{
@@ -43,11 +56,12 @@ namespace SocobanGame.GameObjects
 
 				Position += _velocity * 16;
 				_scale.Y *= 1.1f;
-				OnBoxMoved?.Invoke(Position);
 				return true;
 			}
 
 			return false;
 		}
+		public void AddTurn() => OnBoxMoved?.Invoke(Position);
+		public void Revert() => _turn.Revert();
 	}
 }

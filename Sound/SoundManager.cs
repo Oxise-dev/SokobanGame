@@ -31,7 +31,7 @@ namespace SocobanGame.Sound
 		{
 			if (_soundIsPlaying && _currentSoundTime > 0)
 			{
-				_currentSoundTime -= deltaTime;
+				_currentSoundTime -= deltaTime * 1.025f;
 			}
 			if (_looping && _currentSoundTime <= 0)
 			{

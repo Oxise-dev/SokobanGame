@@ -17,6 +17,10 @@ namespace SocobanGame.FSM
 		private Game _game;
 		private readonly SoundManager _soundManager;
 
+		private KeyboardState _keyboardState;
+		private KeyboardState _lastKeyboardState;
+
+
 		private int _currentLevelNumber = 0;
 		private float _levelTransitionDelay = 2f;
 		private float _levelTransitionSpeed = 0.1f;
@@ -28,16 +32,19 @@ namespace SocobanGame.FSM
 		}
 		public void Update(float deltaTime)
 		{
-			var keyboardState = Keyboard.GetState();
+			_lastKeyboardState = _keyboardState;
+			_keyboardState = Keyboard.GetState();
 			foreach (var gameObject in _currentLevel.GameObjects)
 			{
 				gameObject.Update(deltaTime);
 			}
 			_currentLevel.Goals.Update();
-			if (keyboardState.IsKeyDown(Keys.R))
-			{
+			if (KeyPressed(Keys.Z))
+				_currentLevel.Revert();
+
+			if (KeyPressed(Keys.R))
 				LoadLevel(_currentLevelNumber);
-			}
+
 			if (_currentLevel.Goals.Completed)
 			{
 				_currentLevelNumber++;
@@ -63,6 +70,15 @@ namespace SocobanGame.FSM
 		private void Translate()
 		{
 
+		}
+		private bool KeyPressed(Keys key)
+		{
+			if (_keyboardState.IsKeyDown(key) && _lastKeyboardState.IsKeyUp(key))
+			{
+				//_anyKeyPressed = true;
+				return true;
+			}
+			return false;
 		}
 
 	}

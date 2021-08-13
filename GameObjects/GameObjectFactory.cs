@@ -20,7 +20,7 @@ namespace SocobanGame.GameObjects
 			}
 			else if (id == GameObjectID.Player)
 			{
-				return new Player(position, game, spriteSheet, colisionManager, soundManager);
+				return new Player(position, game, spriteSheet, colisionManager, soundManager, level);
 			}
 			else if (id == GameObjectID.Goal)
 			{
@@ -28,7 +28,7 @@ namespace SocobanGame.GameObjects
 			}
 			else if (id == GameObjectID.Box)
 			{
-				return new Box(position, game, spriteSheet, colisionManager);
+				return new Box(position, game, spriteSheet, colisionManager, level);
 			}
 			return null;
 		}

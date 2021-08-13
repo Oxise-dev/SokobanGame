@@ -7,6 +7,7 @@ using SocobanGame.General;
 using System.Xml.Linq;
 using SocobanGame.Colision;
 using SocobanGame.Sound;
+using System;
 
 namespace SocobanGame.FSM
 {
@@ -16,6 +17,9 @@ namespace SocobanGame.FSM
 
 		private GameObjectFactory _gameObjectFactory;
 		private SoundManager _soundManager;
+
+		public event Action OnNewTurnAdded;
+		public event Action OnRevert;
 		public ColisionManager ColisionManager = new ColisionManager();
 
 		public GoalsContainer Goals = new GoalsContainer();
@@ -87,5 +91,8 @@ namespace SocobanGame.FSM
 			if (gameObject != null && id > 1)
 				ColisionManager.Add(gameObject);
 		}
+
+		public void Revert() => OnRevert?.Invoke();
+		public void AddTurn() => OnNewTurnAdded?.Invoke();
 	}
 }

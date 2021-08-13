@@ -18,12 +18,14 @@ namespace SocobanGame.GameObjects
 		private SoundEffect _moveSound;
 		private SoundEffect _cratePushedSound;
 
+		private Level _level;
+
 		private Vector2 _scale = Vector2.One;
 
 		private Input _input;
 		private KeyboardState _keyboardState, _lastKeyboardState;
 
-		private Turn _turn;
+		private TurnsManager _turn;
 
 		private List<GameObject> _colidedObjects = new List<GameObject>();
 
@@ -33,10 +35,13 @@ namespace SocobanGame.GameObjects
 		//private float _timerSpeed = 10f;
 
 		//private Vector2 _startPosition;
-		public Player(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager, SoundManager soundManager) 
+		public Player(Vector2 position, Game game, SpriteSheet spriteSheet, ColisionManager colisionManager, SoundManager soundManager, Level level) 
 						: base(position, game, spriteSheet, colisionManager)
 		{
 			ID = GameObjectID.Player;
+
+			_level = level;
+			_level.OnRevert += Revert;
 
 			_moveSound = game.Content.Load<SoundEffect>("Sounds\\PlayerMoved");
 			_cratePushedSound = game.Content.Load<SoundEffect>("Sounds\\BoxMoved");
@@ -44,7 +49,7 @@ namespace SocobanGame.GameObjects
 
 			_input = new Input();
 
-			_turn = new Turn(this);
+			_turn = new TurnsManager(this);
 			OnPlayerMoved += _turn.Add;
 		}
 		public float Speed { get; set; } = 16f;
@@ -62,9 +67,6 @@ namespace SocobanGame.GameObjects
 
 			_scale = Vector2.One;
 
-			if (KeyPressed(Keys.Z))
-				_turn.Revert();
-
 			_velocity = GetDirection();
 			_colidedObjects = ColisionManager.GetMoveIntersections(this, _velocity * 16);
 
@@ -74,6 +76,7 @@ namespace SocobanGame.GameObjects
 				if (_velocity != Vector2.Zero)
 				{
 					_scale.Y *= 1.1f;
+					_level.AddTurn();
 					OnPlayerMoved?.Invoke(Position);
 				}
 			}
@@ -84,7 +87,8 @@ namespace SocobanGame.GameObjects
 					if (colidedObject.ID == GameObjectID.Goal)
 					{
 						Position += _velocity * 16;
-						OnPlayerMoved?.Invoke(Position);
+						//_level.AddTurn();
+						//OnPlayerMoved?.Invoke(Position);
 					}
 					else if (colidedObject.ID == GameObjectID.Box)
 					{
@@ -93,6 +97,7 @@ namespace SocobanGame.GameObjects
 						{
 							Position += _velocity * 16;
 							_scale.Y *= 1.1f;
+							_level.AddTurn();
 							OnPlayerMoved?.Invoke(Position);
 							_soundManager.PlaySound(_moveSound, 0.2f);
 						}
@@ -103,20 +108,23 @@ namespace SocobanGame.GameObjects
 			{
 				foreach (var colidedObject in _colidedObjects)
 				{
-					if (colidedObject.ID == GameObjectID.Goal)
-					{
-						var goal = colidedObject as Goal;
-						if (goal.IsOccupied == false)
-						{
-							Position += _velocity * 16;
-						}
-					}
-					else if (colidedObject.ID == GameObjectID.Box)
+					//if (colidedObject.ID == GameObjectID.Goal)
+					//{
+					//	var goal = colidedObject as Goal;
+					//	if (goal.IsOccupied == false)
+					//	{
+					//		_level.AddTurn();
+					//		OnPlayerMoved?.Invoke(Position);
+					//		Position += _velocity * 16;
+					//	}
+					//}
+					if (colidedObject.ID == GameObjectID.Box)
 					{
 						var box = colidedObject as Box;
 						if (box.ApplyVelocity(_velocity))
 						{
 							Position += _velocity * 16;
+							_level.AddTurn();
 							OnPlayerMoved?.Invoke(Position);
 							_soundManager.PlaySound(_moveSound, 0.2f);
 						}
@@ -153,6 +161,9 @@ namespace SocobanGame.GameObjects
 			}
 			return false;
 		}
+
+		public void Revert() => _turn.Revert();
+
 		//if (_timer == 0f)
 		//{
 		//	_startPosition = Position;
